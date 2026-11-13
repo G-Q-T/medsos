@@ -28,7 +28,7 @@ class CommentController extends Controller
         ]);
 
         $hasImage = $request->hasFile('image');
-        $rawText = $hasImage ? $request->caption : $request->comment;
+        $rawText = $request->filled('caption') ? $request->caption : $request->comment;
         $commentText = $this->sanitizeText($rawText);
 
         if ($commentText === null && ! $hasImage) {

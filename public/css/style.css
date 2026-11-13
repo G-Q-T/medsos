@@ -388,6 +388,11 @@ a:hover {
     margin-top: 0.4rem;
 }
 
+.reply-item .comment-image {
+    max-height: 180px;
+    border-radius: 8px;
+}
+
 /* Alerts */
 .alert {
     border-radius: 12px;

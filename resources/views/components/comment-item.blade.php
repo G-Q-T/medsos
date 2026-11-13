@@ -92,12 +92,25 @@
 
         {{-- Inline Reply Box --}}
         <div id="reply-form-box-{{ $comment->id }}" class="mt-2 d-none">
-            <form action="{{ route('posts.comments.store', $post ?? $comment->post) }}" method="POST">
+            <form action="{{ route('posts.comments.store', $post ?? $comment->post) }}" method="POST" enctype="multipart/form-data" onsubmit="return validateReplySubmit({{ $comment->id }})">
                 @csrf
                 <input type="hidden" name="parent_id" value="{{ $comment->id }}">
                 <input type="hidden" name="latitude" id="reply-lat-{{ $comment->id }}" value="">
                 <input type="hidden" name="longitude" id="reply-lng-{{ $comment->id }}" value="">
                 <input type="hidden" name="location_name" id="reply-loc-name-{{ $comment->id }}" value="">
+
+                {{-- Preview Foto Balasan --}}
+                <div id="reply-preview-{{ $comment->id }}" class="mb-2 ms-4 ps-2 d-none">
+                    <div class="position-relative d-inline-block">
+                        <img id="reply-preview-img-{{ $comment->id }}" src="" alt="Preview" class="rounded"
+                             style="max-height: 120px; max-width: 100%; border: 1px solid var(--border-color);">
+                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 rounded-circle p-0 d-flex align-items-center justify-content-center"
+                                style="width: 20px; height: 20px;"
+                                onclick="removeReplyImage({{ $comment->id }})" title="Hapus foto">
+                            <i class="bi bi-x" style="font-size: 0.85rem;"></i>
+                        </button>
+                    </div>
+                </div>
 
                 <div class="d-flex align-items-center gap-2">
                     @if (Auth::user()->avatar)
@@ -110,7 +123,18 @@
                     <div class="input-group input-group-sm flex-grow-1">
                         <input type="text" name="comment" id="reply-input-{{ $comment->id }}"
                                class="form-control form-control-sm"
-                               placeholder="Balas {{ $comment->user->name }}..." required>
+                               placeholder="Balas {{ $comment->user->name }}...">
+
+                        {{-- Tombol Tambah Foto Balasan --}}
+                        <label class="btn btn-outline-secondary btn-sm mb-0 d-inline-flex align-items-center"
+                               for="reply-image-{{ $comment->id }}"
+                               title="Sematkan foto pada balasan" style="cursor: pointer;">
+                            <i class="bi bi-image text-accent"></i>
+                        </label>
+                        <input type="file" class="d-none" id="reply-image-{{ $comment->id }}"
+                               name="image" accept="image/jpg,image/jpeg,image/png"
+                               onchange="previewReplyImage(this, {{ $comment->id }})">
+
                         {{-- Tombol Lokasi balasan dinonaktifkan sementara --}}
                         {{-- <button type="button" class="btn btn-outline-secondary btn-sm"
                                 id="btn-reply-loc-{{ $comment->id }}"

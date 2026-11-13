@@ -93,6 +93,46 @@
             }
         }
 
+        // Reply image preview & remove helpers
+        function previewReplyImage(input, commentId) {
+            const previewContainer = document.getElementById('reply-preview-' + commentId);
+            const previewImg = document.getElementById('reply-preview-img-' + commentId);
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (previewImg) previewImg.src = e.target.result;
+                    if (previewContainer) previewContainer.classList.remove('d-none');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeReplyImage(commentId) {
+            const fileInput = document.getElementById('reply-image-' + commentId);
+            const previewContainer = document.getElementById('reply-preview-' + commentId);
+            const previewImg = document.getElementById('reply-preview-img-' + commentId);
+
+            if (fileInput) fileInput.value = '';
+            if (previewImg) previewImg.src = '';
+            if (previewContainer) previewContainer.classList.add('d-none');
+        }
+
+        function validateReplySubmit(commentId) {
+            const input = document.getElementById('reply-input-' + commentId);
+            const fileInput = document.getElementById('reply-image-' + commentId);
+
+            const hasText = input && input.value.trim().length > 0;
+            const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+
+            if (!hasText && !hasFile) {
+                alert('Silakan tulis balasan atau pilih foto terlebih dahulu.');
+                if (input) input.focus();
+                return false;
+            }
+            return true;
+        }
+
         // Post image preview
         function previewPostImage(input) {
             const previewContainer = document.getElementById('post-image-preview');
@@ -385,6 +425,7 @@
                     input.focus();
                 } else {
                     box.classList.add('d-none');
+                    removeReplyImage(commentId);
                 }
             }
         }
